@@ -96,7 +96,8 @@ history uses explicitly labeled demo alerts without querying live infrastructure
 
 ### Appearance
 
-The navigation offers **Follow device theme**, **Light**, and **Dark**. With no
+The navigation offers four separate buttons: **Auto**, **Light**, **Dark**, and
+**Acid** (pink/lime accents on a dark purple base). With no
 saved override, the site follows `prefers-color-scheme`, including live system
 changes. Manual choices use the existing `theme` localStorage key and survive
 reloads; choosing automatic removes that override. Preferences synchronize across
@@ -104,7 +105,8 @@ tabs. Blocked storage does not prevent in-memory changes. A small pre-render
 initializer applies the same choice before Angular starts, avoiding a hardcoded
 dark first frame. Browser controls use the matching `color-scheme`.
 Existing saved light/dark values are retained; users whose previous version saved
-a light default can select **Follow device theme** once to resume automatic mode.
+a light default can select **Auto** once to resume automatic mode. The acid choice
+is saved like other manual themes and uses dark native browser controls.
 
 ### Interface language
 

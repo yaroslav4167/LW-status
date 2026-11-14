@@ -1,4 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {CommonModule} from '@angular/common';
 import {ThemeService} from './theme.service';
 import {ThemeBtnComponent} from '../navbar/theme-btn/theme-btn.component';
 import {LocalizationModule} from '../i18n/localization.module';
@@ -22,7 +23,7 @@ describe('Theme preference', () => {
     Object.defineProperty(target, 'matches', {get: () => dark});
     media = target as MediaQueryList;
     spyOn(window, 'matchMedia').and.returnValue(media);
-    await TestBed.configureTestingModule({imports: [LocalizationModule], declarations: [ThemeBtnComponent]}).compileComponents();
+    await TestBed.configureTestingModule({imports: [CommonModule, LocalizationModule], declarations: [ThemeBtnComponent]}).compileComponents();
     service = TestBed.inject(ThemeService);
   });
   afterEach(() => {
@@ -48,13 +49,15 @@ describe('Theme preference', () => {
     expect(document.body.classList.contains('dark')).toBeTrue();
   });
   it('retains manual choices despite the system theme and subsequent initialization', () => {
-    for (const preference of ['dark', 'light']) {
+    for (const preference of ['dark', 'light', 'acid']) {
       service.setPreference(preference);
       dark = preference !== 'dark'; changed();
       service.checkTheme();
       expect(service.preference).toBe(preference);
       expect(document.body.classList.contains(preference)).toBeTrue();
       expect(localStorage.getItem('theme')).toBe(preference);
+      expect(document.documentElement.style.colorScheme).toBe(preference === 'acid' ? 'dark' : preference);
+      expect(['light', 'dark', 'acid'].filter(theme => document.body.classList.contains(theme))).toEqual([preference]);
     }
   });
   it('can return to automatic mode and then follows future system changes', () => {
@@ -125,17 +128,29 @@ describe('Theme preference', () => {
     service.ngOnDestroy();
     expect(legacy.removeListener).toHaveBeenCalledWith(jasmine.any(Function));
   });
-  it('provides a labeled native select for all three modes', () => {
+  it('provides four separate, labeled buttons with an active-state indicator', () => {
     service.checkTheme();
     fixture = TestBed.createComponent(ThemeBtnComponent);
     fixture.detectChanges();
-    const select: HTMLSelectElement = fixture.nativeElement.querySelector('select');
-    expect(select.closest('label')).not.toBeNull();
-    expect(Array.from(select.options).map(option => option.value)).toEqual(['auto', 'light', 'dark']);
-    select.value = 'dark'; select.dispatchEvent(new Event('change')); fixture.detectChanges();
-    expect(service.preference).toBe('dark');
-    expect(document.body.classList.contains('dark')).toBeTrue();
-    select.value = 'auto'; select.dispatchEvent(new Event('change')); fixture.detectChanges();
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('select')).toBeNull();
+    const group = host.querySelector('[role=group]')!;
+    expect(group.getAttribute('aria-label')).toBeTruthy();
+    const buttons = Array.from(group.querySelectorAll('button'));
+    expect(buttons.map(button => button.dataset['themeOption'])).toEqual(['auto', 'light', 'dark', 'acid']);
+    for (const button of buttons) {
+      expect(button.type).toBe('button');
+      expect(button.textContent?.trim()).toBeTruthy();
+      button.click(); fixture.detectChanges();
+      expect(service.preference).toBe(button.dataset['themeOption']!);
+      expect(button.getAttribute('aria-pressed')).toBe('true');
+      expect(group.querySelectorAll('[aria-pressed=true]').length).toBe(1);
+      expect(button.querySelector('.selected')).not.toBeNull();
+    }
+    expect(document.body.classList.contains('acid')).toBeTrue();
+    buttons[0].click(); fixture.detectChanges();
     expect(service.preference).toBe('auto');
+    expect(document.body.classList.contains('acid')).toBeFalse();
+    expect(document.body.classList.contains('light')).toBeTrue();
   });
 });

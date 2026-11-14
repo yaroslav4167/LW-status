@@ -1,8 +1,13 @@
-<label class="theme-picker">
+<div class="theme-picker">
   <span><i class="fa-solid fa-swatchbook" aria-hidden="true"></i> {{'Theme' | t}}</span>
-  <select [value]="themeService.preference" (change)="change($event)">
-    <option value="auto">{{'Follow device theme' | t}}</option>
-    <option value="light">{{'Light theme' | t}}</option>
-    <option value="dark">{{'Dark theme' | t}}</option>
-  </select>
-</label>
+  <div class="theme-options" role="group" [attr.aria-label]="'Theme' | t">
+    <button *ngFor="let option of options" type="button" [attr.data-theme-option]="option.value"
+            [attr.aria-pressed]="themeService.preference === option.value"
+            [title]="(option.value === 'auto' ? 'Follow device theme' : option.label) | t"
+            (click)="themeService.setPreference(option.value)">
+      <span class="swatch" [class.acid-swatch]="option.value === 'acid'"><i [class]="'fa-solid ' + option.icon" aria-hidden="true"></i></span>
+      <span>{{option.label | t}}</span>
+      <i *ngIf="themeService.preference === option.value" class="fa-solid fa-check selected" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

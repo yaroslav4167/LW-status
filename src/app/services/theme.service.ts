@@ -1,7 +1,7 @@
 import {DOCUMENT} from '@angular/common';
 import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
 
-export type ThemePreference = 'auto' | 'light' | 'dark';
+export type ThemePreference = 'auto' | 'light' | 'dark' | 'acid';
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +26,13 @@ export class ThemeService implements OnDestroy {
   checkTheme(): void {
     try {
       const saved = localStorage.getItem('theme');
-      this.preference = saved === 'light' || saved === 'dark' ? saved : 'auto';
+      this.preference = saved === 'light' || saved === 'dark' || saved === 'acid' ? saved : 'auto';
     } catch { /* Retain the in-memory preference if storage is blocked. */ }
     this.apply();
   }
 
   setPreference(value: string): void {
-    if (!['auto', 'light', 'dark'].includes(value)) return;
+    if (!['auto', 'light', 'dark', 'acid'].includes(value)) return;
     this.preference = value as ThemePreference;
     try {
       if (value === 'auto') localStorage.removeItem('theme');
@@ -43,9 +43,9 @@ export class ThemeService implements OnDestroy {
 
   private apply(): void {
     const theme = this.preference === 'auto' ? (this.media?.matches ? 'dark' : 'light') : this.preference;
-    this.document.body.classList.remove('light', 'dark');
+    this.document.body.classList.remove('light', 'dark', 'acid');
     this.document.body.classList.add(theme);
-    this.document.documentElement.style.colorScheme = theme;
+    this.document.documentElement.style.colorScheme = theme === 'acid' ? 'dark' : theme;
   }
 
   ngOnDestroy(): void {
