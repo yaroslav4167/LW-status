@@ -72,7 +72,7 @@
       </div>
       <div class="game__wrapper">
         <div class="game__info">
-          <span class="game__info__name">{{this.apiFetch.gamesStatus[i]['name']}}:</span>
+          <span class="game__info__name" [attr.title]="item.name">{{item.name}}</span>
           <span
              class="game__info__state {{this.apiFetch.gamesStatus[i]['status']}}">{{this.apiFetch.gamesStatus[i]['status'] | t}}</span>
         </div>
