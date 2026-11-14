@@ -13,7 +13,19 @@
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
 </head>
-<body class="dark">
+<body>
+<script data-theme-bootstrap>
+  // Apply before Angular renders, without persisting an automatic decision.
+  (function () {
+    var saved;
+    try { saved = localStorage.getItem('theme'); } catch (_) {}
+    var dark = false;
+    try { dark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (_) {}
+    var theme = saved === 'light' || saved === 'dark' ? saved : (dark ? 'dark' : 'light');
+    document.body.classList.add(theme);
+    document.documentElement.style.colorScheme = theme;
+  })();
+</script>
 <app-root>
   <div class="loading-placeholder"><h1>Logixy</h1>
     <h2>Status app loading</h2></div>

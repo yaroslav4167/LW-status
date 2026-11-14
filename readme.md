@@ -94,6 +94,18 @@ API failures are marked as unknown/stale, not invented equipment outages; old
 unrecovered historical incidents are not assumed to still be active. Demo
 history uses explicitly labeled demo alerts without querying live infrastructure.
 
+### Appearance
+
+The navigation offers **Follow device theme**, **Light**, and **Dark**. With no
+saved override, the site follows `prefers-color-scheme`, including live system
+changes. Manual choices use the existing `theme` localStorage key and survive
+reloads; choosing automatic removes that override. Preferences synchronize across
+tabs. Blocked storage does not prevent in-memory changes. A small pre-render
+initializer applies the same choice before Angular starts, avoiding a hardcoded
+dark first frame. Browser controls use the matching `color-scheme`.
+Existing saved light/dark values are retained; users whose previous version saved
+a light default can select **Follow device theme** once to resume automatic mode.
+
 ### Interface language
 
 English (`en`), Russian (`ru`) and Ukrainian (`uk`) are supported. The app chooses

@@ -1,4 +1,8 @@
-<div (click)="themeService.toggleTheme()" class="theme-btn">
-  <span class="theme-btn--ico"><i class="fa-solid fa-swatchbook"></i></span>
-  <span class="theme-btn--text">{{'Change theme' | t}}</span>
-</div>
+<label class="theme-picker">
+  <span><i class="fa-solid fa-swatchbook" aria-hidden="true"></i> {{'Theme' | t}}</span>
+  <select [value]="themeService.preference" (change)="change($event)">
+    <option value="auto">{{'Follow device theme' | t}}</option>
+    <option value="light">{{'Light theme' | t}}</option>
+    <option value="dark">{{'Dark theme' | t}}</option>
+  </select>
+</label>
