@@ -105,6 +105,14 @@ preference is persisted in `lw-status-language`; authentication stays memory-onl
 dialogs update together. User-entered device names and API model status codes
 are not translated or rewritten. Translation sources are in `src/app/i18n/`.
 
+All displayed timestamps use the visitor's browser/OS IANA time zone, independently
+of the selected language. History shows the detected zone; detailed timestamps
+(chart/timeline tooltips, outages, last checks and audit entries) include its
+abbreviation/offset. `Intl.DateTimeFormat` applies the offset at each observation,
+including daylight-saving transitions and fractional-hour zones. Formatting
+caches include the zone and refresh after OS zone changes; raw epoch timestamps,
+chart positions and rolling 24-hour/7-day/30-day periods are never shifted.
+
 ### GitHub Actions deployment
 
 - Push to `main`: plan changes and deploy **Hosting** and **Functions / rules**

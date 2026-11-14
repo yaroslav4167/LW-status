@@ -1,7 +1,7 @@
 <p *ngIf="!hasMeasurements" class="note">{{'No equipment measurements in this period.' | t}}</p>
 <p *ngIf="hasMeasurements && !incidents.length" class="all-clear"><i class="fa-solid fa-check" aria-hidden="true"></i> {{'No outages detected in recorded measurements.' | t}}</p>
 <div class="incident" *ngFor="let incident of incidents | slice:0:visibleCount">
-  <span class="dot"></span><div><strong>{{incident.name}}</strong><small>{{incident.from | localDate:'short'}} → {{incident.to | localDate:'short'}}</small></div>
+  <span class="dot"></span><div><strong>{{incident.name}}</strong><small>{{incident.from | localDate}} → {{incident.to | localDate}}</small></div>
   <span class="status" [class.healthy]="incident.recovered">{{(incident.recovered ? 'Recovered' : 'Recovery not observed') | t}}</span>
 </div>
 <div class="controls" *ngIf="incidents.length > 5">

@@ -3,7 +3,7 @@
   <app-infrastructure-alert *ngIf="demoMode" [state]="demoState" [historyPage]="true" [demo]="true"></app-infrastructure-alert>
   <header class="history-header">
     <div><span class="eyebrow">{{'INFRASTRUCTURE INSIGHTS' | t}}</span><h2>{{'Stability & history' | t}}</h2>
-      <p>{{'Player activity and equipment availability over time.' | t}}</p></div>
+       <p>{{'Player activity and equipment availability over time.' | t}}</p><p>{{'Times are shown in your time zone: {zone}.' | t:{zone: i18n.timeZone} }}</p></div>
     <div class="controls">
       <div class="periods" role="group" [attr.aria-label]="'History period' | t">
         <button *ngFor="let period of periods" type="button" [class.selected]="days === period.days" [attr.aria-pressed]="days === period.days" (click)="load(period.days)">{{period.label | t}}</button>

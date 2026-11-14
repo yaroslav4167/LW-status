@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {formatDate, formatNumber} from '@angular/common';
+import {formatNumber} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {delay, of, Subscription} from 'rxjs';
 import {environment} from '../../environments/environment';
@@ -24,9 +24,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
   data?: HistoryResponse;
   summary?: ReturnType<typeof summarizeHistory>;
   private request?: Subscription;
-  private readonly cellTitles = new WeakMap<TimelineCell, {locale: string; text: string}>();
+  private readonly cellTitles = new WeakMap<TimelineCell, {locale: string; timeZone: string; text: string}>();
 
-  constructor(private http: HttpClient, public infrastructure: InfrastructureStatusService, private i18n: LocalizationService) {}
+  constructor(private http: HttpClient, public infrastructure: InfrastructureStatusService, public i18n: LocalizationService) {}
 
   get demoState(): InfrastructureState | null {
     if (!this.data) return null;
@@ -67,11 +67,12 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   cellTitle(cell: TimelineCell): string {
     const cached = this.cellTitles.get(cell);
-    if (cached?.locale === this.i18n.locale) return cached.text;
-    const text = `${formatDate(cell.from, 'medium', this.i18n.locale)} – ${formatDate(cell.to, 'medium', this.i18n.locale)}: ` +
+    const timeZone = this.i18n.timeZone;
+    if (cached?.locale === this.i18n.locale && cached.timeZone === timeZone) return cached.text;
+    const text = `${this.i18n.formatDate(cell.from, 'medium', timeZone)} – ${this.i18n.formatDate(cell.to, 'medium', timeZone)}: ` +
       (cell.uptime === null ? this.i18n.translate('No measurements') : this.i18n.translate('{value}% online (measured checks)',
         {value: formatNumber(cell.uptime, this.i18n.locale, '1.1-1')}));
-    this.cellTitles.set(cell, {locale: this.i18n.locale, text});
+    this.cellTitles.set(cell, {locale: this.i18n.locale, timeZone, text});
     return text;
   }
 }

@@ -59,6 +59,22 @@ describe('HistoryComponent', () => {
     });
     expect(fixture.componentInstance.error).toBeFalse();
   });
+  it('updates timeline tooltips and the zone label without changing measurements', () => {
+    const service = TestBed.inject(LocalizationService);
+    const zone = spyOnProperty(service, 'timeZone', 'get').and.returnValue('UTC');
+    const from = Date.parse('2026-07-10T12:00:00Z');
+    http.expectOne(`${environment.HISTORY_URL}?days=1`).flush({from, to: from + 300000, interval: 300000, samples: []});
+    const cell = {from, to: from + 300000, state: 'online' as const, uptime: 100};
+    const utc = fixture.componentInstance.cellTitle(cell);
+    expect(utc).toContain('12:00:00');
+    zone.and.returnValue('Asia/Kathmandu');
+    const local = fixture.componentInstance.cellTitle(cell);
+    expect(local).toContain('17:45:00');
+    expect(local).not.toBe(utc);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Asia/Kathmandu');
+    expect(fixture.componentInstance.data?.from).toBe(from);
+  });
 
   it('cancels the previous request when the period changes', () => {
     const first = http.expectOne(`${environment.HISTORY_URL}?days=1`);

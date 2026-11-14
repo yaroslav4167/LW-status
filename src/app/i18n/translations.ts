@@ -1,4 +1,5 @@
 const rows = [
+  ['Times are shown in your time zone: {zone}.', 'Время указано в вашем часовом поясе: {zone}.', 'Час указано у вашому часовому поясі: {zone}.'],
   ['{count} isolated failures were manually marked Online. These are administrative corrections, not measured successes.', 'Одиночные сбои вручную отмечены Online: {count}. Это ручные корректировки, а не измеренные успешные подключения.', 'Поодинокі збої вручну позначено Online: {count}. Це ручні коригування, а не виміряні успішні підключення.'],
   ['{count} isolated failed checks were excluded after operator review. They are gaps, not successful checks.', 'Оператор исключил одиночные неудачные проверки: {count}. Они считаются пропусками, а не успешными проверками.', 'Оператор виключив одиночні невдалі перевірки: {count}. Вони вважаються пропусками, а не успішними перевірками.'],
   ['Connection attempts', 'Количество попыток', 'Кількість спроб'],
