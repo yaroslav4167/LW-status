@@ -70,10 +70,12 @@ of application health. Failed collectors and missing periods are excluded rather
 than counted as online or offline. Coverage is shown separately. Outages are
 grouped only across consecutive observations; recovery is never inferred across
 gaps. Player charts show real measured counts and timestamps. Longer periods
-select first/minimum/maximum/last observations per interval (at most 480 dots),
-preserving peaks without inventing averages or drawing across missing samples.
-Pointer/touch tooltips and keyboard arrows inspect the same points used by the
-SVG line. Dates, numbers and tooltips follow the selected UI language.
+select first/minimum/maximum/last observations per interval (at most 480 samples),
+preserving peaks without inventing averages. The player line visually bridges
+missing samples, without dot markers or fabricated measurements. Pointer/touch
+tooltips select the nearest displayed real observation by time; keyboard arrows
+inspect the same observations. Missing equipment checks still remain gaps in
+uptime/outage calculations. Dates, numbers and tooltips follow the UI language.
 Tests: `npm test -- --watch=false --browsers=ChromeHeadless`.
 History shows currently configured devices only: removing a device hides its
 past observations and outages from the API/UI without deleting stored samples.

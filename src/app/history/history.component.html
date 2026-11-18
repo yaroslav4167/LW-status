@@ -28,7 +28,7 @@
         <article><span>{{'Average online' | t}}</span><strong>{{summary.average | localNumber:'1.0-1'}}</strong><small>{{'Across recorded samples' | t}}</small></article>
         <article><span>{{'Observed outages' | t}}</span><strong [class.unhealthy]="summary.incidents.length > 0">{{summary.incidents.length | localNumber}}</strong><small>{{summary.coverage | localNumber}}% {{'equipment data coverage' | t}}</small></article>
       </div>
-      <article class="panel"><div class="panel-heading"><div><h3>{{'Players online' | t}}</h3><p>{{'Recorded online · hover or tap a dot for details' | t}}</p></div><span class="badge">{{'5 min sampling' | t}}</span></div>
+       <article class="panel"><div class="panel-heading"><div><h3>{{'Players online' | t}}</h3><p>{{'Recorded online · hover or tap the chart for details' | t}}</p></div><span class="badge">{{'5 min sampling' | t}}</span></div>
         <app-player-chart [data]="data"></app-player-chart>
       </article>
       <article class="panel">

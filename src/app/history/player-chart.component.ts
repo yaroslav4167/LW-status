@@ -43,13 +43,16 @@ export class PlayerChartComponent implements AfterViewInit, OnDestroy {
   hover(event: PointerEvent): void {
     const rect = (event.currentTarget as SVGSVGElement).getBoundingClientRect();
     if (!rect.width || !rect.height) return;
+    const x = (event.clientX - rect.left) / rect.width * this.chart.width;
+    const y = (event.clientY - rect.top) / rect.height * this.chart.height;
+    if (x < this.chart.left || x > this.chart.right || y < this.chart.top || y > this.chart.bottom) {
+      this.clear(); return;
+    }
     let best = -1;
-    let distance = 32 * 32;
+    let distance = Infinity;
     this.chart.points.forEach((point, index) => {
-      const dx = rect.left + point.x / this.chart.width * rect.width - event.clientX;
-      const dy = rect.top + point.y / this.chart.height * rect.height - event.clientY;
-      const squared = dx * dx + dy * dy;
-      if (squared < distance) { distance = squared; best = index; }
+      const dx = Math.abs(point.x - x);
+      if (dx < distance) { distance = dx; best = index; }
     });
     this.activeIndex = best < 0 ? null : best;
   }

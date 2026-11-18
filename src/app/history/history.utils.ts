@@ -88,27 +88,24 @@ export function summarizeHistory(data: HistoryResponse) {
 }
 
 // Select real observations (first/min/max/last per interval), never synthetic
-// averages or bucket-center timestamps. Coordinates are shared by line and dots.
+// averages or bucket-center timestamps. Connect available observations visually,
+// including across gaps, without adding measurements to the tooltip data.
 export function playerChart(data: HistoryResponse, width = 960) {
   const height = 240;
   const left = 42;
   const right = Math.max(left + 1, width - 12);
   const top = 16;
   const bottom = 206;
-  const buckets = Array.from({length: 120}, () => [] as {timestamp: number; online: number; segment: number}[]);
-  let segment = 0;
-  let previous: number | null = null;
+  const buckets = Array.from({length: 120}, () => [] as {timestamp: number; online: number}[]);
   let count = 0;
   const duration = data.to - data.from;
   const unique = new Map(data.samples.map(sample => [sample.timestamp, sample]));
   Array.from(unique.values()).sort((a, b) => a.timestamp - b.timestamp).forEach(sample => {
     if (duration <= 0 || sample.timestamp < data.from || sample.timestamp > data.to) return;
-    if (sample.players === null || !Number.isFinite(sample.players) || sample.players < 0) { previous = null; return; }
-    if (previous === null || sample.timestamp - previous > data.interval * 1.5) segment++;
-    previous = sample.timestamp;
+    if (sample.players === null || !Number.isFinite(sample.players) || sample.players < 0) return;
     count++;
     const index = Math.min(119, Math.floor((sample.timestamp - data.from) / duration * 120));
-    buckets[index].push({timestamp: sample.timestamp, online: sample.players, segment});
+    buckets[index].push({timestamp: sample.timestamp, online: sample.players});
   });
   const selected = buckets.flatMap(values => {
     if (!values.length) return [];
@@ -124,15 +121,8 @@ export function playerChart(data: HistoryResponse, width = 960) {
     x: round(left + (point.timestamp - data.from) / duration * (right - left)),
     y: round(bottom - point.online / axisMax * (bottom - top))
   }));
-  const segments: string[] = [];
-  let path = '';
-  points.forEach((point, index) => {
-    if (index === 0 || point.segment !== points[index - 1].segment) {
-      if (path) segments.push(path);
-      path = `M${point.x},${point.y}`;
-    } else path += ` L${point.x},${point.y}`;
-  });
-  if (path) segments.push(path);
+  const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x},${point.y}`).join(' ');
+  const segments = path ? [path] : [];
   return {width, height, left, right, top, bottom, max, axisMax, segments, points, downsampled: count > points.length,
     ticks: [{y: top, value: axisMax}, {y: (top + bottom) / 2, value: axisMax / 2}, {y: bottom, value: 0}]};
 }
